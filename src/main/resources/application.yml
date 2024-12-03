@@ -6,6 +6,7 @@ spring:
     multipart:
       max-file-size: 200MB
       max-request-size: 200MB
+      enabled: true
 minio:
   host: http://139.159.237.2:9000 # 访问地址
   accessKey: 1UQ3vMCnUgMTi2apQ7EU # 登录账号

@@ -1,5 +1,6 @@
 package com.tpc.miniospringboot.utils;
 
+import com.tpc.miniospringboot.enumeration.ViewContentTypeEnum;
 import com.tpc.miniospringboot.pojo.FileInfo;
 import io.minio.*;
 import io.minio.messages.Bucket;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,5 +68,26 @@ public class MinioUtil {
             names.add(b.name());
         });
         return names;
+    }
+
+    /**
+     * 上传一个文件
+     */
+    public String uploadFile(InputStream stream, String bucket, String objectName) throws Exception {
+        ObjectWriteResponse objectWriteResponse = minioClient.putObject(PutObjectArgs.builder()
+                        .bucket(bucket)
+                        .object(objectName)
+                        .contentType(ViewContentTypeEnum.getContentType(objectName))
+                        .stream(stream, -1, 10485760).build());
+        return endpoint + "/" + bucket + "/" + objectWriteResponse.object();
+    }
+
+    /**
+     * 下载一个文件
+     */
+    public InputStream download(String bucket, String objectName) throws Exception {
+        InputStream stream = minioClient.getObject(
+                GetObjectArgs.builder().bucket(bucket).object(objectName).build());
+        return stream;
     }
 }
